@@ -29,7 +29,7 @@ class UserInterface:
         5 %s---%s---%s---%s---%s
 """
 
-        t = ['o'] * 25
+        t = ['.'] * 25
 
         for i in self.engine.board.tigerPositions:
             t[i] = "T"
@@ -37,7 +37,7 @@ class UserInterface:
         for i in self.engine.board.goatsPositions:
             if t[i] == "G":
                 t[i] = 2
-            elif t[i] == 'o':
+            elif t[i] == '.':
                 t[i] = "G"
             elif isinstance(t[i], int):
                 t[i] += 1
