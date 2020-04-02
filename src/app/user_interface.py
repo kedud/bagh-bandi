@@ -50,7 +50,7 @@ class UserInterface:
 
         print(board % tuple(t))
 
-        print(f"Its {self.engine.turn} turn")
+        print(f"Its {self.engine.board.turn} turn")
         print(f"There is {20 - len(self.engine.board.goatsPositions)} dead goats")
 
     def ask_user_action(self):
@@ -83,7 +83,7 @@ class UserInterface:
         action.set_destination(destination)
         action.set_departure(departure)
 
-        if self.engine.turn == "tigers":
+        if self.engine.board.turn == "tigers":
             if self.is_move_a_capture(departure, destination):
                 action.set_is_a_capture()
 
@@ -97,13 +97,13 @@ class UserInterface:
 
     def is_valid_move(self, departure, destination):
 
-        if self.engine.turn == "goats":
+        if self.engine.board.turn == "goats":
             goat_moves = self.engine.board.get_goats_available_moves()
             if departure in goat_moves:
                 if destination in goat_moves[departure]:
                     return True
 
-        elif self.engine.turn == "tigers":
+        elif self.engine.board.turn == "tigers":
             tiger_moves = self.engine.board.get_tigers_available_moves()
             print(tiger_moves)
             print(departure)
