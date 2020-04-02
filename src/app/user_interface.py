@@ -42,6 +42,12 @@ class UserInterface:
             elif isinstance(t[i], int):
                 t[i] += 1
 
+        for i in range(len(t)):
+            if t[i] == 'G' or t[i] in (2,3,4,5):
+                t[i] = "\033[32m"+ str(t[i]) + "\033[0m"
+            if t[i] == 'T':
+                t[i] = "\033[31mT\033[0m"
+
         print(board % tuple(t))
 
         print(f"Its {self.engine.turn} turn")
