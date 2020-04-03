@@ -17,19 +17,24 @@ class UserInterface:
           | / | \\ | / | \\ |
         5 %s---%s---%s---%s---%s
         """
+        t = ['.'] * 25
 
-            t = ['o'] * 25
+        for i in self.engine.board.tigerPositions:
+            t[i] = "T"
 
-            for i in tigerPositions:
-                t[i] = "T"
+        for i in self.engine.board.goatsPositions:
+            if t[i] == "G":
+                t[i] = 2
+            elif t[i] == '.':
+                t[i] = "G"
+            elif isinstance(t[i], int):
+                t[i] += 1
 
-            for i in goatPositions:
-                if t[i] == "G":
-                    t[i] = 2
-                elif t[i] == 'o':
-                    t[i] = "G"
-                elif isinstance(t[i], int):
-                    t[i] += 1
+        for i in range(len(t)):
+            if t[i] == 'G' or t[i] in (2,3,4,5):
+                t[i] = "\033[32m"+ str(t[i]) + "\033[0m"
+            if t[i] == 'T':
+                t[i] = "\033[31mT\033[0m"
 
             print(board % tuple(t))
 
