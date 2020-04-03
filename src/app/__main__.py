@@ -1,9 +1,9 @@
-from src.app.user_interface import UserInterface
+from src.app.network_user_interface import NetworkUserInterface
 
 
 def main():
-    ui = UserInterface()
-    ui.play_user_vs_user()
+    ui = NetworkUserInterface()
+    ui.play()
 
 
 # main
