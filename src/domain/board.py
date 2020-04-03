@@ -74,7 +74,28 @@ class Board:
 
         :rtype:boolean
         """
-        pass
+        return self.get_winner() is not None
+
+    def get_winner(self):
+        """
+        defines Which player is the winner of the game if any.
+
+        :return:
+            "goats" if goats won the game
+            "tigers" if tigers won the game
+             None if no-one won the game
+
+        :rtype:string
+        """
+
+        if self.dead_goats >= 5:
+            return "tigers"
+
+        if self.turn == "tigers":
+            if len(self.get_tigers_available_captures()) == 0 and len(self.get_tigers_available_moves()) == 0:
+                return "goats"
+
+        return None
 
     def utility_function(self, p):
         """
