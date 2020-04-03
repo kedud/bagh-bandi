@@ -4,9 +4,7 @@ from src.domain.engine import Engine, Action
 class UserInterface:
 
     @staticmethod
-    def show():
-
-        def show(self, tigerPositions, goatPositions, turn):
+    def show(tigerPositions, goatPositions, turn):
             board = """
           A   B   C   D   E
         1 %s---%s---%s---%s---%s
