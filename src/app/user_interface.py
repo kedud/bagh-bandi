@@ -29,7 +29,7 @@ class UserInterface:
         5 %s---%s---%s---%s---%s
 """
 
-        t = ['o'] * 25
+        t = ['.'] * 25
 
         for i in self.engine.board.tigerPositions:
             t[i] = "T"
@@ -37,14 +37,20 @@ class UserInterface:
         for i in self.engine.board.goatsPositions:
             if t[i] == "G":
                 t[i] = 2
-            elif t[i] == 'o':
+            elif t[i] == '.':
                 t[i] = "G"
             elif isinstance(t[i], int):
                 t[i] += 1
 
+        for i in range(len(t)):
+            if t[i] == 'G' or t[i] in (2,3,4,5):
+                t[i] = "\033[32m"+ str(t[i]) + "\033[0m"
+            if t[i] == 'T':
+                t[i] = "\033[31mT\033[0m"
+
         print(board % tuple(t))
 
-        print(f"Its {self.engine.turn} turn")
+        print(f"Its {self.engine.board.turn} turn")
         print(f"There is {20 - len(self.engine.board.goatsPositions)} dead goats")
 
     def ask_user_action(self):
@@ -77,7 +83,7 @@ class UserInterface:
         action.set_destination(destination)
         action.set_departure(departure)
 
-        if self.engine.turn == "tigers":
+        if self.engine.board.turn == "tigers":
             if self.is_move_a_capture(departure, destination):
                 action.set_is_a_capture()
 
@@ -91,13 +97,13 @@ class UserInterface:
 
     def is_valid_move(self, departure, destination):
 
-        if self.engine.turn == "goats":
+        if self.engine.board.turn == "goats":
             goat_moves = self.engine.board.get_goats_available_moves()
             if departure in goat_moves:
                 if destination in goat_moves[departure]:
                     return True
 
-        elif self.engine.turn == "tigers":
+        elif self.engine.board.turn == "tigers":
             tiger_moves = self.engine.board.get_tigers_available_moves()
             print(tiger_moves)
             print(departure)
