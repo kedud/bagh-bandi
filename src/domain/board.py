@@ -3,6 +3,8 @@ import numpy as np
 
 class Board:
 
+    INF = 1000000
+
     # possible connections from one point to another
     _move_connections = {
         0: [1, 5, 6], 1: [2, 0, 6], 2: [3, 1, 7, 6, 8], 3: [4, 2, 8], 4: [3, 9, 8],
@@ -108,8 +110,62 @@ class Board:
 
         :rtype:float
         """
-        if self.terminal_test():
-            pass
+        if p == "goats":
+            return - self.evaluate()
         else:
-            pass
+            return self.evaluate()
 
+    def get_movable_tiger_list(self):
+        """
+        fetch list of movable tigers
+
+        :rtype:array
+        """
+        movable_tiger_list = []
+        movable_tiger_list.append( list(self.get_tigers_available_captures().keys()))
+        movable_tiger_list.append( list(self.get_tigers_available_moves().keys()))
+
+        return np.unique(movable_tiger_list)
+
+
+    def evaluate(self, depth=0):
+        """
+        Returns a numeric evaluation of the position
+        Written from the perspective of Tiger
+        """
+
+        winner = self.get_winner()
+        if winner is None:
+            return 300 * len(self.get_movable_tiger_list()) + 700 * self.dead_goats \
+                   - 700 * self.board.no_of_closed_spaces() - depth
+
+        if winner == "goats":
+            return -Board.INF
+        elif winner == "tigers":
+            return Board.INF
+
+    def _get_empty_positions(self):
+        """
+        Returns all the empty positions(points) in the board.
+        """
+        return [i for i in range(25) if (i not in self.goatsPositions and i not in self.tigerPositions)]
+
+
+    def _is_closed(self, position):
+        """
+        Returns True if the position is closed else False.
+        --------------------------------------------------
+        Closed means that the position is empty and surrounded
+        by all the neighbouring goats.  In addition, no tigers
+        can access the empty position by capturing.
+        """
+
+        all_goat_neighbours = all([i in self.goatsPositions for i in self._move_connections[position]])
+        capture_tiger_present = any([True for key, value in self._capture_connections.items() if (position in value and key in self.tigerPositions)])
+        return all_goat_neighbours and capture_tiger_present is False
+
+    def no_of_closed_spaces(self):
+        """
+        Return the number of closed spaces in the board.
+        """
+        return len([True for i in self._get_empty_positions() if self._is_closed(i)])
