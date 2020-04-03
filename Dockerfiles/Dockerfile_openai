@@ -27,6 +27,12 @@ RUN pip install streamlit==0.51.0
 RUN pip install bokeh==1.4.0
 RUN pip install pyspark==2.4.4
 RUN pip install PyQt5==5.14.1
+RUN pip install Flask==1.1.0
+RUN pip install Flask-GraphQL==1.4.1
+RUN pip install gunicorn==19.7.1
+RUN pip install Flask-JWT==0.3.2
+RUN pip install Flask-RESTful==0.3.6
+
 
 USER root
 
@@ -49,6 +55,7 @@ WORKDIR /bagh-bandi
 ENV PYTHONPATH /bangh-bandi
 
 EXPOSE 19999
+EXPOSE 50000
 
 ENTRYPOINT ["/tini", "--"]
 CMD ["jupyter-notebook", "--allow-root", "--no-browser", "--port=19999"]
