@@ -1,3 +1,6 @@
+import sys, os
+sys.path.insert(0, os.getcwd())
+
 from flask import Flask
 from src.domain.engine import Engine
 import json
@@ -43,3 +46,12 @@ def skip_turn(player_type):
         return "OK"
     else:
         return "Cannot skip turn"
+
+
+
+def main():
+    app.run(host='0.0.0.0', port=5000)
+
+
+if __name__ == "__main__":
+    main()

@@ -28,6 +28,7 @@ class Agent(object):
         :rtype:Board
         """
 
+
         pass
 
     def evaluation_function(self, state):
