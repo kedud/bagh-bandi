@@ -46,10 +46,9 @@ class Engine:
 
     def is_valid_move(self, departure, destination):
 
-        print("COUCOUS")
         if self.board.turn == "goats":
             goat_moves = self.board.get_goats_available_moves()
-            if departure in goat_moves:
+            if departure in goat_moves.keys():
                 if destination in goat_moves[departure]:
                     return True
 
@@ -65,8 +64,6 @@ class Engine:
             print(tiger_captures)
             print(departure)
             if departure in tiger_captures.keys():
-                print("departure in tiger_captures:")
-                print(tiger_captures[departure])
                 if destination in tiger_captures[departure]:
                     return True
 

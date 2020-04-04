@@ -5,7 +5,7 @@ class UserInterface:
 
     @staticmethod
     def show(tigerPositions, goatPositions, turn):
-            board = """
+        board = """
           A   B   C   D   E
         1 %s---%s---%s---%s---%s
           | \\ | / | \\ | / |
@@ -19,10 +19,10 @@ class UserInterface:
         """
         t = ['.'] * 25
 
-        for i in self.engine.board.tigerPositions:
+        for i in tigerPositions:
             t[i] = "T"
 
-        for i in self.engine.board.goatsPositions:
+        for i in goatPositions:
             if t[i] == "G":
                 t[i] = 2
             elif t[i] == '.':
