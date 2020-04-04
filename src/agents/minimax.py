@@ -1,13 +1,14 @@
 import time
 from src.agents.agent import Agent
 from random import shuffle
+from copy import deepcopy
 
 
 class MinimaxABAgent(Agent):
     """
         Minimax agent with Alpha Beta Pruning inspired from https://github.com/haryoa/evo-pawness/blob/master/ai_modules/classic_algorithm.py
     """
-    def __init__(self, max_depth=4, player_color=0):
+    def __init__(self, agent_type, engine, max_depth=4):
         """
         Initiation
         Parameters
@@ -17,9 +18,8 @@ class MinimaxABAgent(Agent):
         player_color : int
             The player's index as MAX in minimax algorithm
         """
-        super(MinimaxABAgent, self).__init__()
+        super(MinimaxABAgent, self).__init__(agent_type, engine)
         self.max_depth = max_depth
-        self.player_color = player_color
         self.node_expanded = 0
 
     def enemy_turn_action(self, action_key, new_state):
@@ -27,6 +27,10 @@ class MinimaxABAgent(Agent):
         Nothing to do here
         """
         pass
+
+    def moves(self):
+        departure, destination = self.choose_action(self.engine.board)
+        self.engine.move(departure, destination)
 
     def choose_action(self, state):
         """
@@ -39,6 +43,8 @@ class MinimaxABAgent(Agent):
         float, str:
             The evaluation or utility and the action key name
         """
+        state = deepcopy(state)
+
         self.node_expanded = 0
 
         start_time = time.time()
@@ -61,8 +67,8 @@ class MinimaxABAgent(Agent):
         :param beta: parameter of AB Prunning, save the current minimizer best value
         :return: int , str The value of the best action and the name of the action
         """
-        if current_depth == self.max_depth or state.is_terminal():
-            return self.evaluation_function(state, self.player_color), ""
+        if current_depth == self.max_depth or state.terminal_test():
+            return self.evaluation_function(state), ""
 
         self.node_expanded += 1
 

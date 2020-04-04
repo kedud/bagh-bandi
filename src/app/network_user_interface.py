@@ -12,10 +12,22 @@ class NetworkUserInterface(UserInterface):
         self.goatPositions = []
         self.tigerPositions = []
         self.is_recapture_allowed = False
+        self.game_type = ''
+        self.player_type = ''
+
+    def define_type_of_game(self):
+        game_type = input("Do you want to play :\nA) user vs user\nB) user vs ai\n[A/B]? : ")
+        if game_type.lower().strip() == 'a':
+            self.game_type = 'uvu'
+        elif game_type.lower().strip() == 'b':
+            self.game_type = 'uva'
 
     def play(self):
-        self.player_type =  self.ask_user_what_he_wants_to_play()
-        self.url =  self.ask_user_server_url()
+        self.define_type_of_game()
+        self.player_type = self.ask_user_what_he_wants_to_play()
+        self.url = self.ask_user_server_url()
+        if self.game_type == 'uva':
+            self.send_agent_setup_request()
         self.update_state()
         while True:
             self.ask_user_action()
@@ -56,6 +68,16 @@ class NetworkUserInterface(UserInterface):
 
     def send_move_request(self, departure, destination):
         url = self.url + "/move/" + self.player_type + "/" + str(departure) + "/" + str(destination)
+        print(f"Url : {url}")
+        r = requests.get(url)
+        print(r.text)
+
+    def send_agent_setup_request(self):
+        if self.player_type == 'tigers':
+            agent_type = 'goats'
+        else:
+            agent_type = 'tigers'
+        url = f"{self.url}/setup_agent/{agent_type}"
         print(f"Url : {url}")
         r = requests.get(url)
         print(r.text)

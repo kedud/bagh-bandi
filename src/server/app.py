@@ -1,13 +1,16 @@
 import sys, os
+
 sys.path.insert(0, os.getcwd())
 
 from flask import Flask
 from src.domain.engine import Engine
+from src.agents.minimax import MinimaxABAgent
 import json
 
 app = Flask(__name__)
 
 engine = Engine()
+
 
 @app.route('/state', methods=['GET', 'POST'])
 def state():
@@ -18,14 +21,17 @@ def state():
     ret["re_capture_allowed"] = engine.re_capture_allowed
     return json.dumps(ret)
 
+
 @app.route('/move/<player_type>/<int:departure>/<int:destination>', methods=['GET', 'POST'])
 def postId(player_type, departure, destination):
     if player_type == engine.board.turn:
         if engine.is_valid_move(departure, destination):
             engine.move(departure, destination)
+            if agent:
+                agent.moves()
             return "OK"
         else:
-            return(f"/!\\ INVALID MOVE : {departure} to {destination}")
+            return (f"/!\\ INVALID MOVE : {departure} to {destination}")
     else:
         return "NOT YOUR TURN"
 
@@ -47,6 +53,12 @@ def skip_turn(player_type):
     else:
         return "Cannot skip turn"
 
+
+@app.route('/setup_agent/<agent_type>', methods=['GET', 'POST'])
+def setup_agent(agent_type):
+    global agent
+    agent = MinimaxABAgent(agent_type, engine)
+    return "agent setup OK"
 
 
 def main():
