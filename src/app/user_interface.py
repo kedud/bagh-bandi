@@ -5,7 +5,7 @@ class UserInterface:
 
     @staticmethod
     def show(tigerPositions, goatPositions, turn):
-        board = """
+            board = """
           A   B   C   D   E
         1 %s---%s---%s---%s---%s
           | \\ | / | \\ | / |
