@@ -72,4 +72,3 @@ class NetworkUserInterface(UserInterface):
             url = self.url
         print(f"Url \"{url}\"")
         return url
-
