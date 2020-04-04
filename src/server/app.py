@@ -14,7 +14,7 @@ def state():
     ret["turn"] = engine.board.turn
     return json.dumps(ret)
 
-@app.route('/move/<player_type>/<departure>/<destination>', methods=['GET', 'POST'])
+@app.route('/move/<player_type>/<int:departure>/<int:destination>', methods=['GET', 'POST'])
 def postId(player_type, departure, destination):
     if player_type == engine.board.turn:
         if engine.is_valid_move(departure, destination):
@@ -31,12 +31,3 @@ def reset():
     global engine
     engine = Engine()
     return "OK"
-
-
-def main():
-    app.run(host='0.0.0.0', port=5000)
-
-
-if __name__ == "__main__":
-    main()
-
