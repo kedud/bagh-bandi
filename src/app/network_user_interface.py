@@ -11,6 +11,7 @@ class NetworkUserInterface(UserInterface):
         self.url = "http://192.168.1.13:5000"
         self.goatPositions = []
         self.tigerPositions = []
+        self.is_recapture_allowed = False
 
     def play(self):
         self.player_type =  self.ask_user_what_he_wants_to_play()
@@ -20,7 +21,11 @@ class NetworkUserInterface(UserInterface):
             self.ask_user_action()
 
     def ask_user_action(self):
-        a = input("""[s]how [m]ove""")
+        ask = "[s]how [m]ove"
+        if self.is_recapture_allowed:
+            ask += " s[k]ip (give turn to goats)"
+        a = input(ask)
+
         if a == "s":
             self.update_state()
             UserInterface.show(self.tigerPositions,
@@ -40,6 +45,14 @@ class NetworkUserInterface(UserInterface):
             print(f"from {departure} to {destination}")
 
             self.send_move_request(departure, destination)
+        elif a == "k" and self.is_recapture_allowed:
+            self.send_skip_turn_request()
+
+    def send_skip_turn_request(self):
+        url = f"{self.url}/skip/{self.player_type}"
+        print(f"Url : {url}")
+        r = requests.get(url)
+        print(r.text)
 
     def send_move_request(self, departure, destination):
         url = self.url + "/move/" + self.player_type + "/" + str(departure) + "/" + str(destination)
@@ -54,6 +67,7 @@ class NetworkUserInterface(UserInterface):
         self.turn = data["turn"]
         self.goatPositions = data["goat_positions"]
         self.tigerPositions = data["tigers_positions"]
+        self.is_recapture_allowed = data["re_capture_allowed"]
 
     def ask_user_what_he_wants_to_play(self):
         while True:

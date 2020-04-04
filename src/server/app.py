@@ -15,6 +15,7 @@ def state():
     ret["goat_positions"] = engine.board.goatsPositions
     ret["tigers_positions"] = engine.board.tigerPositions
     ret["turn"] = engine.board.turn
+    ret["re_capture_allowed"] = engine.re_capture_allowed
     return json.dumps(ret)
 
 @app.route('/move/<player_type>/<int:departure>/<int:destination>', methods=['GET', 'POST'])
@@ -34,6 +35,18 @@ def reset():
     global engine
     engine = Engine()
     return "OK"
+
+
+@app.route('/skip/<player_type>', methods=['GET', 'POST'])
+def skip_turn(player_type):
+    global engine
+    engine = Engine()
+    if engine.re_capture_allowed() and engine.board.turn == player_type and player_type == "tigers":
+        engine.skip_tiger_recapture()
+        return "OK"
+    else:
+        return "Cannot skip turn"
+
 
 
 def main():
