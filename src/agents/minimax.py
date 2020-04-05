@@ -30,7 +30,7 @@ class MinimaxABAgent(Agent):
 
     def moves(self):
         departure, destination = self.choose_action(self.engine.board)
-        self.engine.move(departure, destination)
+        self.engine.board = self.engine.move(departure, destination, self.engine.board)
 
     def choose_action(self, state):
         """
@@ -50,12 +50,12 @@ class MinimaxABAgent(Agent):
         start_time = time.time()
 
         print("MINIMAX AB : Wait AI is choosing")
-        list_action = self.get_possible_action(state)
-        eval_score, selected_key_action = self._minimax(0, state, True, float('-inf'), float('inf'))
+        # list_action = self.get_possible_action(state)
+        eval_score, selected_action_tuple = self._minimax(0, state, True, float('-inf'), float('inf'))
         print("MINIMAX : Done, eval = %d, expanded %d" % (eval_score, self.node_expanded))
         print("--- %s seconds ---" % (time.time() - start_time))
 
-        return selected_key_action, list_action[selected_key_action]
+        return selected_action_tuple[0], selected_action_tuple[1]
 
     def _minimax(self, current_depth, state, is_max_turn, alpha, beta):
         """
@@ -68,31 +68,36 @@ class MinimaxABAgent(Agent):
         :return: int , str The value of the best action and the name of the action
         """
         if current_depth == self.max_depth or state.terminal_test():
-            return self.evaluation_function(state), ""
+            return self.evaluation_function(state), tuple()
 
         self.node_expanded += 1
 
         possible_action = self.get_possible_action(state)
-        key_of_actions = list(possible_action.keys())
-
-        shuffle(key_of_actions) # add randomness here
+        # key_of_actions = list(possible_action.keys())
+        # list_of_actions = list(possible_action.items())
+        list_of_actions = self.set_tuples_possible_action(possible_action)
+        shuffle(list_of_actions)  # add randomness here
         best_value = float('-inf') if is_max_turn else float('inf')
-        action_target = ""
-        for action_key in key_of_actions:
-            new_state = self.result_function(state,possible_action[action_key])
+        action_target = tuple()
+        # for action_key in list_of_actions:
+        for action_tuple in list_of_actions:
+            # new_state = self.result_function(state,possible_action[action_key])
+            new_state = self.result_function(action_tuple[0], action_tuple[1], state)
 
             eval_child, action_child = self._minimax(current_depth+1, new_state, not is_max_turn, alpha, beta)
 
             if is_max_turn and best_value < eval_child:
                 best_value = eval_child
-                action_target = action_key
+                # action_target = action_key
+                action_target = action_tuple
                 alpha = max(alpha, best_value)
                 if beta <= alpha:
                     break
 
             elif (not is_max_turn) and best_value > eval_child:
                 best_value = eval_child
-                action_target = action_key
+                # action_target = action_key
+                action_target = action_tuple
                 beta = min(beta, best_value)
                 if beta <= alpha:
                     break

@@ -9,6 +9,7 @@ class NetworkUserInterface(UserInterface):
     def __init__(self):
         self.turn = "goats"
         self.url = "http://192.168.1.13:5000"
+        self.url = "http://open_ai_server:5000"
         self.goatPositions = []
         self.tigerPositions = []
         self.is_recapture_allowed = False

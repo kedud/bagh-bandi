@@ -11,6 +11,7 @@ app = Flask(__name__)
 
 engine = Engine()
 
+agent = None
 
 @app.route('/state', methods=['GET', 'POST'])
 def state():
@@ -24,9 +25,10 @@ def state():
 
 @app.route('/move/<player_type>/<int:departure>/<int:destination>', methods=['GET', 'POST'])
 def postId(player_type, departure, destination):
+    global agent, engine
     if player_type == engine.board.turn:
-        if engine.is_valid_move(departure, destination):
-            engine.move(departure, destination)
+        if engine.is_valid_move(departure, destination, engine.board):
+            engine.board = engine.move(departure, destination, engine.board)
             if agent:
                 agent.moves()
             return "OK"
