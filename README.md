@@ -6,18 +6,12 @@
 python3 /src/server/app.py
 ```
 
-### Run client
-
-```bash
-cd js-client;
-firefox index.html
-# OR
-google-chrome index.html
-```
-
 ### play online
 
-You can expose the port `5000` using ngrok.
 
-Then you have to set thr url in the client
- 
+```bash
+# Expose the port `5000` using ngrok:
+./ngrok http 5000   
+```
+
+Then access to the exposed URL
