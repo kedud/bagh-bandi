@@ -1,14 +1,18 @@
 import sys, os
 sys.path.insert(0, os.getcwd())
 
-from flask import Flask
+from flask import Flask, send_from_directory, render_template
 from src.domain.engine import Engine
 import json
 import flask
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='')
 
 engine = Engine()
+
+@app.route('/')
+def root():
+    return app.send_static_file("index.html")
 
 @app.route('/state', methods=['GET', 'POST', 'OPTIONS'])
 def state():
