@@ -1,26 +1,6 @@
 <!DOCTYPE html>
 <html>
 
-<script>
-
-    function loadCookie() {
-
-        var url = localStorage.getItem("url");
-        if (url != "") {
-            document.getElementById("url").value = url;
-        }
-        else {
-            document.getElementById("url").value = "http://127.0.0.1:5000"
-            localStorage.setItem("url", url);
-        }
-    }
-
-    window.onload = function () {
-        loadCookie();
-    };
-
-</script>
-
 <head>
     <title>Hello Web - Controlling Processing from JavaScript</title>
 </head>
@@ -48,13 +28,13 @@
         frameRate( 15 );
         X = width / 2;
         Y = height / 2;
-        board_width_unit =  (width - (2 * 30)) / 4; 
+        board_width_unit =  (width - (2 * 30)) / 4;
         }
 
         // Main draw loop
         void draw(){
 
-                        
+
         // Fill canvas grey
         background( 100 );
 
@@ -87,11 +67,11 @@
         }
 
         fill(255);
-        font = loadFont("Bold"); 
-        textFont(font); 
+        font = loadFont("Bold");
+        textFont(font);
         textSize(24);
 
-        for (int i = 0; i < goats.length; i++) { 
+        for (int i = 0; i < goats.length; i++) {
             goats[i] = 0;
             tigers[i] = 0;
         }
@@ -114,7 +94,7 @@
             // Set fill-color to blue
             fill( 0, 121, 184 );
             // Set stroke-color white
-            stroke(255); 
+            stroke(255);
 
             if (goats[i] > 0)
             {
@@ -127,11 +107,11 @@
                 else
                 {
                     // Set stroke-color white
-                    stroke(255);          
+                    stroke(255);
                 }
 
-                X = 30 + ((i % 5) *board_width_unit); 
-                Y = 30 + ((int)(i / 5) * board_width_unit); 
+                X = 30 + ((i % 5) *board_width_unit);
+                Y = 30 + ((int)(i / 5) * board_width_unit);
                 ellipse( X, Y, radius, radius );
 
                 if (goats[i] > 1)
@@ -155,11 +135,11 @@
                 else
                 {
                     // Set stroke-color white
-                    stroke(255);          
+                    stroke(255);
                 }
 
-                X = 30 + ((i % 5) *board_width_unit); 
-                Y = 30 + ((int)(i / 5) * board_width_unit); 
+                X = 30 + ((i % 5) *board_width_unit);
+                Y = 30 + ((int)(i / 5) * board_width_unit);
                 ellipse( X, Y, radius, radius );
             }
         }
@@ -170,7 +150,7 @@
 
         for (int i = 0; i < 25; i++)
         {
-            int X = 30 + ((i % 5) *board_width_unit); 
+            int X = 30 + ((i % 5) *board_width_unit);
             int Y = 30 + ((int)(i / 5) * board_width_unit);
 
             if (dist(X, Y, mouseX,mouseY) <= 25)
@@ -220,8 +200,6 @@
 
 <button onclick="skip()" id="skip">Skip Turn</button>
 
-<input type="text" onchange="updateCookie()" id="url">
-
 <div id="msg">
 </div>
 
@@ -242,7 +220,7 @@
     }
 
     async function move(departure, destination) {
-        var url = document.getElementById("url").value + "/move/" + document.getElementById("player_type").value + "/" + departure + "/" + destination;
+        var url = window.location.origin + "/move/" + document.getElementById("player_type").value + "/" + departure + "/" + destination;
         let response = await fetch(url);
         let data = await response.json();
         return data;
@@ -254,7 +232,7 @@
     };
 
     async function sendSkipRequest() {
-        var url = document.getElementById("url").value + "/skip/" + document.getElementById("player_type").value;
+        var url = window.location.origin + "/skip/" + document.getElementById("player_type").value;
         let response = await fetch(url);
         let data = await response.json();
         return data;
@@ -306,20 +284,10 @@
 
     }
 
-    function updateCookie() {
-        localStorage.setItem("url", document.getElementById("url").value);
-        console.log(document.cookie);
-    }
-
     var tigerPositions = [];
     var goatPositions = [];
 
-    loadCookie();
-
-    const url = document.getElementById('url');
-    url.addEventListener('input', updateCookie);
-
-    fetchAsync(document.getElementById("url").value + "/state")
+    fetchAsync(window.location.origin + "/state")
         .then(data => setState(data))
         .catch(reason => console.log(reason.message))
 
