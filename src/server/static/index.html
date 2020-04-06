@@ -286,10 +286,16 @@
 
     var tigerPositions = [];
     var goatPositions = [];
-
     fetchAsync(window.location.origin + "/state")
         .then(data => setState(data))
         .catch(reason => console.log(reason.message))
+
+
+    window.setInterval(function () {
+        fetchAsync(window.location.origin + "/state")
+            .then(data => setState(data))
+            .catch(reason => console.log(reason.message))
+    }, 5000);
 
 
 </script>
