@@ -82,9 +82,8 @@ class Engine:
             return True
 
         elif self.board.turn == "tigers":
-            if len(self.action_history) > 0 and self.action_history[-1].get_is_a_capture() and \
-                self.is_valid_multi_capture(departure, destination):
-                    return True
+            if len(self.action_history) > 0 and self.action_history[-1].get_is_a_capture():
+                return self.is_valid_multi_capture(departure, destination)
             elif self.is_valid_tiger_move(departure, destination):
                 return True
             elif self.is_valid_tiger_capture(departure, destination):
@@ -94,7 +93,7 @@ class Engine:
         return False
 
     def is_valid_multi_capture(self, departure, destination):
-        if len(self.action_history) > 0 and self.action_history[-1].get_is_a_capture():
+        if len(self.action_history) >0 and self.action_history[-1].get_is_a_capture():
             if self.is_valid_tiger_capture(departure, destination):
                 if self.action_history[-1].destination != departure:
                     print("Recapture must use same tiger")
