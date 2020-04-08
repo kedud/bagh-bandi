@@ -40,6 +40,7 @@ def state():
 @app.route('/move/<player_type>/<int:departure>/<int:destination>', methods=['GET', 'POST'])
 def postId(player_type, departure, destination):
     global agent, engine
+    msg = "OK"
     if player_type == engine.board.turn:
         if engine.is_valid_move(departure, destination, engine.board):
             engine.board = engine.move(departure, destination, engine.board)
@@ -65,6 +66,7 @@ def reset():
 @app.route('/skip/<player_type>', methods=['GET', 'POST'])
 def skip_turn(player_type):
     global engine
+    msg = "OK"
     if engine.re_capture_allowed and engine.board.turn == player_type and player_type == "tigers":
         engine.skip_tiger_recapture()
         if agent and engine.board.turn != player_type:
@@ -73,7 +75,7 @@ def skip_turn(player_type):
     else:
         msg = "Cannot skip turn"
 
-     return buildResponse(msg)
+    return buildResponse(msg)
 
 @app.route('/setup_agent/<agent_type>', methods=['GET', 'POST'])
 def setup_agent(agent_type):
