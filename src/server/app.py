@@ -1,13 +1,17 @@
 import sys, os
+
 sys.path.insert(0, os.getcwd())
 
 from flask import Flask
 from src.domain.engine import Engine
+from src.agents.minimax import MinimaxABAgent
 import json
 
 app = Flask(__name__)
 
 engine = Engine()
+
+agent = None
 
 @app.route('/state', methods=['GET', 'POST'])
 def state():
@@ -18,14 +22,18 @@ def state():
     ret["re_capture_allowed"] = engine.re_capture_allowed
     return json.dumps(ret)
 
+
 @app.route('/move/<player_type>/<int:departure>/<int:destination>', methods=['GET', 'POST'])
 def postId(player_type, departure, destination):
+    global agent, engine
     if player_type == engine.board.turn:
-        if engine.is_valid_move(departure, destination):
-            engine.move(departure, destination)
+        if engine.is_valid_move(departure, destination, engine.board):
+            engine.board = engine.move(departure, destination, engine.board)
+            if agent and engine.board.turn != player_type:
+                agent.moves()
             return "OK"
         else:
-            return(f"/!\\ INVALID MOVE : {departure} to {destination}")
+            return (f"/!\\ INVALID MOVE : {departure} to {destination}")
     else:
         return "NOT YOUR TURN"
 
@@ -40,13 +48,25 @@ def reset():
 @app.route('/skip/<player_type>', methods=['GET', 'POST'])
 def skip_turn(player_type):
     global engine
-    engine = Engine()
-    if engine.re_capture_allowed() and engine.board.turn == player_type and player_type == "tigers":
+    if engine.re_capture_allowed and engine.board.turn == player_type and player_type == "tigers":
         engine.skip_tiger_recapture()
+        if agent and engine.board.turn != player_type:
+            agent.moves()
         return "OK"
     else:
         return "Cannot skip turn"
 
+
+@app.route('/setup_agent/<agent_type>', methods=['GET', 'POST'])
+def setup_agent(agent_type):
+    global agent
+    agent = MinimaxABAgent(agent_type, engine)
+    return "agent setup OK"
+
+@app.route('/move_agent', methods=['GET', 'POST'])
+def move_agent():
+    global agent
+    agent.moves()
 
 
 def main():
