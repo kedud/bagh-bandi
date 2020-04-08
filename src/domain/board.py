@@ -124,8 +124,8 @@ class Board:
         :rtype:array
         """
         movable_tiger_list = []
-        movable_tiger_list.append( list(self.get_tigers_available_captures().keys()))
-        movable_tiger_list.append( list(self.get_tigers_available_moves().keys()))
+        movable_tiger_list.append(list(self.get_tigers_available_captures().keys()))
+        movable_tiger_list.append(list(self.get_tigers_available_moves().keys()))
 
         return np.unique(movable_tiger_list)
 

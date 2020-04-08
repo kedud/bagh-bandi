@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 class Agent(object):
     """docstring for Agent."""
 
@@ -20,10 +22,13 @@ class Agent(object):
         else:
             all_possible_actions = state.get_goats_available_moves()
         for dep in all_possible_actions:
+            list_moves_to_remove = []
             for dest in all_possible_actions[dep]:
                 is_valid = self.engine.is_valid_move(dep, dest, state)
                 if not is_valid:
-                    all_possible_actions[dep].remove(dest)
+                    list_moves_to_remove.append(dest)
+            for move in list_moves_to_remove:
+                all_possible_actions[dep].remove(move)
         return all_possible_actions
 
     def set_tuples_possible_action(self, possible_actions):
@@ -53,7 +58,8 @@ class Agent(object):
         """
         # exploratory function -> you don't want to change the state of the board
         is_game_move = False
-        next_board = self.engine.move(departure, destination, board, is_game_move)
+        next_board = deepcopy(board)
+        next_board = self.engine.move(departure, destination, next_board, is_game_move)
         return next_board
 
     def evaluation_function(self, state):

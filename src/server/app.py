@@ -29,7 +29,7 @@ def postId(player_type, departure, destination):
     if player_type == engine.board.turn:
         if engine.is_valid_move(departure, destination, engine.board):
             engine.board = engine.move(departure, destination, engine.board)
-            if agent:
+            if agent and engine.board.turn != player_type:
                 agent.moves()
             return "OK"
         else:
@@ -48,9 +48,10 @@ def reset():
 @app.route('/skip/<player_type>', methods=['GET', 'POST'])
 def skip_turn(player_type):
     global engine
-    engine = Engine()
-    if engine.re_capture_allowed() and engine.board.turn == player_type and player_type == "tigers":
+    if engine.re_capture_allowed and engine.board.turn == player_type and player_type == "tigers":
         engine.skip_tiger_recapture()
+        if agent and engine.board.turn != player_type:
+            agent.moves()
         return "OK"
     else:
         return "Cannot skip turn"
@@ -61,6 +62,11 @@ def setup_agent(agent_type):
     global agent
     agent = MinimaxABAgent(agent_type, engine)
     return "agent setup OK"
+
+@app.route('/move_agent', methods=['GET', 'POST'])
+def move_agent():
+    global agent
+    agent.moves()
 
 
 def main():

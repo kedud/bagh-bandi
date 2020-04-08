@@ -9,7 +9,7 @@ class NetworkUserInterface(UserInterface):
     def __init__(self):
         self.turn = "goats"
         self.url = "http://192.168.1.13:5000"
-        self.url = "http://open_ai_server:5000"
+        # self.url = "http://open_ai_server:5000"
         self.goatPositions = []
         self.tigerPositions = []
         self.is_recapture_allowed = False
@@ -61,6 +61,10 @@ class NetworkUserInterface(UserInterface):
         elif a == "k" and self.is_recapture_allowed:
             self.send_skip_turn_request()
 
+        elif a == "a":
+            self.send_agent_move_request()
+
+
     def send_skip_turn_request(self):
         url = f"{self.url}/skip/{self.player_type}"
         print(f"Url : {url}")
@@ -69,6 +73,12 @@ class NetworkUserInterface(UserInterface):
 
     def send_move_request(self, departure, destination):
         url = self.url + "/move/" + self.player_type + "/" + str(departure) + "/" + str(destination)
+        print(f"Url : {url}")
+        r = requests.get(url)
+        print(r.text)
+
+    def send_agent_move_request(self):
+        url = self.url + "/move_agent"
         print(f"Url : {url}")
         r = requests.get(url)
         print(r.text)
