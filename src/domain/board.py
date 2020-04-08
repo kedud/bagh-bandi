@@ -30,6 +30,8 @@ class Board:
         self.goatsPositions = [1, 1, 1, 1, 1, 3, 3, 3, 3, 3, 11, 11, 11, 11, 11, 13, 13, 13, 13, 13]
         self.dead_goats = 0
         self.turn = "goats"
+        self.action_history = []
+
 
     def get_tigers_available_moves(self):
         available_moves = {}
@@ -57,7 +59,7 @@ class Board:
 
     def get_goats_available_moves(self):
         available_moves = {}
-        for goatFrom in np.unique(self.goatsPositions):
+        for goatFrom in self.goatsPositions:
             for goatDestination in self._move_connections[goatFrom]:
                 # If goat destination is not busy
                 if goatDestination not in self.tigerPositions and goatDestination not in self.goatsPositions:
@@ -122,8 +124,8 @@ class Board:
         :rtype:array
         """
         movable_tiger_list = []
-        movable_tiger_list.append( list(self.get_tigers_available_captures().keys()))
-        movable_tiger_list.append( list(self.get_tigers_available_moves().keys()))
+        movable_tiger_list.append(list(self.get_tigers_available_captures().keys()))
+        movable_tiger_list.append(list(self.get_tigers_available_moves().keys()))
 
         return np.unique(movable_tiger_list)
 
@@ -137,7 +139,7 @@ class Board:
         winner = self.get_winner()
         if winner is None:
             return 300 * len(self.get_movable_tiger_list()) + 700 * self.dead_goats \
-                   - 700 * self.board.no_of_closed_spaces() - depth
+                   - 700 * self.no_of_closed_spaces() - depth
 
         if winner == "goats":
             return -Board.INF

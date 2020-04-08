@@ -1,13 +1,14 @@
 import time
 from src.agents.agent import Agent
 from random import shuffle
+from copy import deepcopy
 
 
 class MinimaxABAgent(Agent):
     """
         Minimax agent with Alpha Beta Pruning inspired from https://github.com/haryoa/evo-pawness/blob/master/ai_modules/classic_algorithm.py
     """
-    def __init__(self, max_depth=4, player_color=0):
+    def __init__(self, agent_type, engine, max_depth=1):
         """
         Initiation
         Parameters
@@ -17,9 +18,8 @@ class MinimaxABAgent(Agent):
         player_color : int
             The player's index as MAX in minimax algorithm
         """
-        super(MinimaxABAgent, self).__init__()
+        super(MinimaxABAgent, self).__init__(agent_type, engine)
         self.max_depth = max_depth
-        self.player_color = player_color
         self.node_expanded = 0
 
     def enemy_turn_action(self, action_key, new_state):
@@ -27,6 +27,10 @@ class MinimaxABAgent(Agent):
         Nothing to do here
         """
         pass
+
+    def moves(self):
+        departure, destination = self.choose_action(self.engine.board)
+        self.engine.board = self.engine.move(departure, destination, self.engine.board)
 
     def choose_action(self, state):
         """
@@ -39,17 +43,19 @@ class MinimaxABAgent(Agent):
         float, str:
             The evaluation or utility and the action key name
         """
+        state = deepcopy(state)
+
         self.node_expanded = 0
 
         start_time = time.time()
 
         print("MINIMAX AB : Wait AI is choosing")
-        list_action = self.get_possible_action(state)
-        eval_score, selected_key_action = self._minimax(0, state, True, float('-inf'), float('inf'))
+        # list_action = self.get_possible_action(state)
+        eval_score, selected_action_tuple = self._minimax(0, state, True, float('-inf'), float('inf'))
         print("MINIMAX : Done, eval = %d, expanded %d" % (eval_score, self.node_expanded))
         print("--- %s seconds ---" % (time.time() - start_time))
 
-        return selected_key_action, list_action[selected_key_action]
+        return selected_action_tuple[0], selected_action_tuple[1]
 
     def _minimax(self, current_depth, state, is_max_turn, alpha, beta):
         """
@@ -61,32 +67,37 @@ class MinimaxABAgent(Agent):
         :param beta: parameter of AB Prunning, save the current minimizer best value
         :return: int , str The value of the best action and the name of the action
         """
-        if current_depth == self.max_depth or state.is_terminal():
-            return self.evaluation_function(state, self.player_color), ""
+        if current_depth == self.max_depth or state.terminal_test():
+            return self.evaluation_function(state), tuple()
 
         self.node_expanded += 1
 
         possible_action = self.get_possible_action(state)
-        key_of_actions = list(possible_action.keys())
-
-        shuffle(key_of_actions) # add randomness here
+        # key_of_actions = list(possible_action.keys())
+        # list_of_actions = list(possible_action.items())
+        list_of_actions = self.set_tuples_possible_action(possible_action)
+        shuffle(list_of_actions)  # add randomness here
         best_value = float('-inf') if is_max_turn else float('inf')
-        action_target = ""
-        for action_key in key_of_actions:
-            new_state = self.result_function(state,possible_action[action_key])
+        action_target = tuple()
+        # for action_key in list_of_actions:
+        for action_tuple in list_of_actions:
+            # new_state = self.result_function(state,possible_action[action_key])
+            new_state = self.result_function(action_tuple[0], action_tuple[1], state)
 
             eval_child, action_child = self._minimax(current_depth+1, new_state, not is_max_turn, alpha, beta)
 
             if is_max_turn and best_value < eval_child:
                 best_value = eval_child
-                action_target = action_key
+                # action_target = action_key
+                action_target = action_tuple
                 alpha = max(alpha, best_value)
                 if beta <= alpha:
                     break
 
             elif (not is_max_turn) and best_value > eval_child:
                 best_value = eval_child
-                action_target = action_key
+                # action_target = action_key
+                action_target = action_tuple
                 beta = min(beta, best_value)
                 if beta <= alpha:
                     break

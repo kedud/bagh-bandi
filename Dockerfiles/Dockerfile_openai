@@ -57,5 +57,6 @@ ENV PYTHONPATH /bangh-bandi
 EXPOSE 19999
 EXPOSE 5000
 
-ENTRYPOINT ["/tini", "--"]
-CMD ["jupyter-notebook", "--allow-root", "--no-browser", "--port=19999"]
+# ENTRYPOINT ["/tini", "--"]
+# CMD ["jupyter-notebook", "--allow-root", "--no-browser", "--port=19999"]
+CMD ["/bin/bash"]

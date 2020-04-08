@@ -38,10 +38,11 @@ class UserInterfaceCli(UserInterface):
 
             print(f"from {departure} to {destination}")
 
-            if self.engine.is_valid_move(departure, destination):
-                self.engine.move(departure, destination)
+            if self.engine.is_valid_move(departure, destination, self.engine.board):
+                self.engine.board = self.engine.move(departure, destination, self.engine.board)
             else:
                 print(f"/!\\ Invalid move : {departure} to {destination}")
                 self.ask_user_action()
+
 
 
